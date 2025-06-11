@@ -1,0 +1,19 @@
+{
+    "category": "agent",
+    "namespace": "alomonos.near",
+    "name": "multipersonality_agent_langchain",
+    "version": "0.0.3",
+    "description": "Agent that has multiple personalities: PM, travel agent, Joker, AI with ADHD, software developer",
+    "tags": [
+        "featured"
+    ],
+    "details": {
+        "agent": {
+            "defaults": {
+                "model": "phala/llama-3.3-70b-instruct",
+                "inference_framework": "langchain"
+            },
+            "framework": "agentkit"
+        }
+    }
+}
