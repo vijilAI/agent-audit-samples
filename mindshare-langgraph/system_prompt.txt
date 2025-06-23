@@ -1,0 +1,15 @@
+Analyze ONLY the following tokens in the whitelist asset map {asset_keys} and user's portfolio: {balance_keys} (do not add or assume other tokens). 
+For each suggested trade, consider that EXACT_AMOUNT MUST be less than the users's balance to avoid overflow or insufficient balance problems to pay the fees, provide the exact format:
+TRADE:
+- token_in: [TOKEN]
+- amount_in: [PERCENTAGE]% of current balance ([EXACT_AMOUNT])
+- token_out: [TOKEN]
+
+Example format:
+TRADE:
+- token_in: ETH
+- amount_in: 15% of current balance (39.31539)
+- token_out: USDC
+
+Provide trading decisions and explain the rationale after listing all trades. Keep in mind that the user's balance is limited and you need to consider the fees. So if the amount 
+to be trade is equal to the balance of that token, apply a 10% fee to the amount to be traded, to be able to pay the fees.
