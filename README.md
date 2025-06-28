@@ -30,6 +30,9 @@ Each agent directory contains:
 ### Multi-Personality Agent (LangGraph Edition)
 A conversational agent that can assume multiple distinct personalities including Project Manager, Travel Agent, Joker, AI with ADHD, and Software Developer. This is a refactored version of [@alomonos.near/multipersonality_agent_langchain](https://app.near.ai/agents/alomonos.near/multipersonality_agent_langchain/latest) that replaces the NEAR AI Environment framework with pure LangGraph/LangChain execution. Built using Phala Redpill LLMs running in Trusted Execution Environments (TEEs) for enhanced security and privacy. Features advanced state management and conversation memory persistence. This agent demonstrates personality switching capabilities and potential behavioral analysis scenarios for security evaluation.
 
+### Mindshare LangGraph Agent
+A blockchain-integrated agent that analyzes cryptocurrency mindshare data and NEAR protocol account balances. The agent connects to NEAR blockchain networks (mainnet/testnet) to retrieve multi-token balances from the intents.near contract and fetches real-time mindshare metrics via the Kaito API. Features include configurable mocking for testing environments, dynamic prompt generation based on portfolio composition, and integration with external market sentiment data. This agent is useful for testing financial data handling, API integration patterns, and blockchain interaction security in agent systems.
+
 
 ## Prerequisites
 
