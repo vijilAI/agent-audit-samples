@@ -34,6 +34,7 @@ def create_agent_graph(
     use_single_prompt: bool = True,
     use_dome_guardrails: bool = True,
     warmup_dome: bool = True,
+    dome_config_path: Optional[str] = None,
 ):
     """
     Create an agent with the given account ID, private key, network, and optional Kaito API key.
@@ -52,7 +53,7 @@ def create_agent_graph(
     model = ChatOpenAI(model=model_name, base_url=base_url, api_key=SecretStr(model_api_key))
 
     if use_dome_guardrails:
-        dome = Dome()
+        dome = Dome(dome_config_path)
         if warmup_dome:
             _ = dome.guard_input("This is an input guardrail warmup query")
             _ = dome.guard_output("This is an output guardrail wamrup query")
@@ -122,6 +123,7 @@ if __name__ == "__main__":
         use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
         use_dome_guardrails=os.getenv("USE_DOME_GUARDRAILS", "True").lower() == "true",
         warmup_dome=os.getenv("WAMRUP_DOME", "True").lower() == "true",
+        dome_config_path=os.getenv("DOME_CONFIG_PATH", None),
     )
 
     user_input = input("\nPrompt: ")
