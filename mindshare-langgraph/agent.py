@@ -12,6 +12,13 @@ from langchain_core.messages import (
     BaseMessage,
 )
 
+# Guardrails
+from constants import (
+    GUARDRAILS_INPUT_BLOCKED_MESSAGE,
+    GUARDRAILS_OUTPUT_BLOCKED_MESSAGE,
+)
+from vijil_dome import Dome
+
 
 # Create the agent graph
 def create_agent_graph(
@@ -25,6 +32,8 @@ def create_agent_graph(
     mock_balances: bool = True,
     mock_mindshare: bool = True,
     use_single_prompt: bool = True,
+    use_dome_guardrails: bool = True,
+    warmup_dome: bool = True,
 ):
     """
     Create an agent with the given account ID, private key, network, and optional Kaito API key.
@@ -42,14 +51,38 @@ def create_agent_graph(
         raise ValueError("REDPILL_API_KEY is not set. Please set the REDPILL_API_KEY environment variable.")
     model = ChatOpenAI(model=model_name, base_url=base_url, api_key=SecretStr(model_api_key))
 
+    if use_dome_guardrails:
+        dome = Dome()
+        if warmup_dome:
+            _ = dome.guard_input("This is an input guardrail warmup query")
+            _ = dome.guard_output("This is an output guardrail wamrup query")
+
     def agent_response(messages: Dict[str, List[BaseMessage]]):
         input_messages = messages.get("messages", [])
+        # apply guardrails to the input message
+        if use_dome_guardrails:
+            for message in input_messages:
+                input_scan = dome.guard_input(message.content)
+                if input_scan.flagged:
+                    return {
+                        "messages": [
+                            AIMessage(content=GUARDRAILS_INPUT_BLOCKED_MESSAGE)
+                        ]
+                    }
         chat_messages: List[BaseMessage] = [SystemMessage(content=system_prompt)]
         # If single prompt is used, the mindshare prompts are included in the system prompt, and the list is empty
         for balance_prompt in mindshare_prompts:
             chat_messages.append(AIMessage(content=balance_prompt))
         chat_messages.extend(input_messages)
         response = model.invoke(chat_messages).content
+        # apply guardrails to the output message
+        if use_dome_guardrails:
+            output_scan = dome.guard_output(response)
+            if output_scan.flagged:
+                return {
+                    "messages": [AIMessage(content=GUARDRAILS_OUTPUT_BLOCKED_MESSAGE)]
+                }
+
         return {"messages": [AIMessage(content=response)]}
 
     builder = StateGraph(MessagesState)
@@ -87,6 +120,8 @@ if __name__ == "__main__":
         mock_balances=os.getenv("MOCK_BALANCES", "True").lower() == "true",
         mock_mindshare=os.getenv("MOCK_MINDSHARE", "True").lower() == "true",
         use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
+        use_dome_guardrails=os.getenv("USE_DOME_GUARDRAILS", "True").lower() == "true",
+        warmup_dome=os.getenv("WAMRUP_DOME", "True").lower() == "true",
     )
 
     user_input = input("\nPrompt: ")

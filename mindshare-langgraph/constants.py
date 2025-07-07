@@ -84,3 +84,6 @@ MOCK_MINDSHARES = {
     "TRUMP": {"mindshare": 0.05},
     "XRP": {"mindshare": 0.05},
 }
+
+GUARDRAILS_INPUT_BLOCKED_MESSAGE = "I'm sorry, but this request is in violation of my operating policies. I cannot answer it."
+GUARDRAILS_OUTPUT_BLOCKED_MESSAGE = "I'm sorry, but the response to this request is in violation of my operating policies. I cannot respond to this request."

@@ -6,13 +6,15 @@ authors = [
     {name = "Anuj Tambwekar",email = "anuj@vijil.ai"}
 ]
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11, <3.13"
 dependencies = [
     "langgraph (>=0.4.8,<0.5.0)",
     "requests (>=2.32.4,<3.0.0)",
     "near-api (>=0.2.1,<0.3.0)",
-    "langchain-openai (>=0.3.24,<0.4.0)",
-    "python-dotenv (>=1.1.0,<2.0.0)"
+    "langchain-openai (>=0.3.0,<0.4.0)",
+    "python-dotenv (>=1.0.0,<2.0.0)",
+    "vijil-dome (>=1.0.9,<2.0.0)",
+    "google-api-python-client (>=2.175.0,<3.0.0)"
 ]
 
 
