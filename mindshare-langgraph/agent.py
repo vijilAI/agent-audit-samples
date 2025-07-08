@@ -21,7 +21,7 @@ from vijil_dome import Dome
 
 
 # Create the agent graph
-def create_agent_graph(
+def _create_agent_graph(
     model_name: str = "phala/llama-3.3-70b-instruct",
     base_url: str = "https://api.redpill.ai/v1",
     model_api_key: Optional[str] = None,
@@ -49,8 +49,12 @@ def create_agent_graph(
 
     model_api_key = model_api_key or os.getenv("REDPILL_API_KEY")
     if not model_api_key:
-        raise ValueError("REDPILL_API_KEY is not set. Please set the REDPILL_API_KEY environment variable.")
-    model = ChatOpenAI(model=model_name, base_url=base_url, api_key=SecretStr(model_api_key))
+        raise ValueError(
+            "REDPILL_API_KEY is not set. Please set the REDPILL_API_KEY environment variable."
+        )
+    model = ChatOpenAI(
+        model=model_name, base_url=base_url, api_key=SecretStr(model_api_key)
+    )
 
     if use_dome_guardrails:
         dome = Dome(dome_config_path)
@@ -101,6 +105,25 @@ def create_agent_graph(
     return builder.compile(checkpointer=None)
 
 
+# Create using env vars
+def create_agent_graph():
+    return _create_agent_graph(
+        model_name="phala/llama-3.3-70b-instruct",
+        base_url="https://api.redpill.ai/v1",
+        model_api_key=os.getenv("REDPILL_API_KEY"),
+        account_id=os.getenv("NEAR_ACCOUNT_ID"),
+        private_key=os.getenv("NEAR_PRIVATE_KEY"),
+        network=os.getenv("NEAR_NETWORK", "mainnet"),
+        kaito_api_key=os.getenv("KAITO_API_KEY", None),
+        mock_balances=os.getenv("MOCK_BALANCES", "True").lower() == "true",
+        mock_mindshare=os.getenv("MOCK_MINDSHARE", "True").lower() == "true",
+        use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
+        use_dome_guardrails=os.getenv("USE_DOME_GUARDRAILS", "True").lower() == "true",
+        warmup_dome=os.getenv("WARMUP_DOME", "True").lower() == "true",
+        dome_config_path=os.getenv("DOME_CONFIG_PATH", None),
+    )
+
+
 if __name__ == "__main__":
     import logging
     import os
@@ -116,21 +139,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     # Swap out to redpill LLMs. The original agent uses Llama 3.1 70B on fireworks
-    graph = create_agent_graph(
-        model_name="phala/llama-3.3-70b-instruct",
-        base_url="https://api.redpill.ai/v1",
-        model_api_key=os.getenv("REDPILL_API_KEY"),
-        account_id=os.getenv("NEAR_ACCOUNT_ID"),
-        private_key=os.getenv("NEAR_PRIVATE_KEY"),
-        network=os.getenv("NEAR_NETWORK", "mainnet"),
-        kaito_api_key=os.getenv("KAITO_API_KEY", None),
-        mock_balances=os.getenv("MOCK_BALANCES", "True").lower() == "true",
-        mock_mindshare=os.getenv("MOCK_MINDSHARE", "True").lower() == "true",
-        use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
-        use_dome_guardrails=os.getenv("USE_DOME_GUARDRAILS", "True").lower() == "true",
-        warmup_dome=os.getenv("WAMRUP_DOME", "True").lower() == "true",
-        dome_config_path=os.getenv("DOME_CONFIG_PATH", None),
-    )
+    graph = create_agent_graph()
 
     user_input = input("\nPrompt: ")
 
