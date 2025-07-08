@@ -62,12 +62,6 @@ def _create_agent_graph(
             _ = dome.guard_input("This is an input guardrail warmup query")
             _ = dome.guard_output("This is an output guardrail wamrup query")
 
-    if use_dome_guardrails:
-        dome = Dome(dome_config_path)
-        if warmup_dome:
-            _ = dome.guard_input("This is an input guardrail warmup query")
-            _ = dome.guard_output("This is an output guardrail wamrup query")
-
     def agent_response(messages: Dict[str, List[BaseMessage]]):
         input_messages = messages.get("messages", [])
         # apply guardrails to the input message
