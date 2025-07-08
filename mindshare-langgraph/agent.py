@@ -1,7 +1,9 @@
+import os
+
+from pydantic import SecretStr
 from setup import AgentSetup
 from typing import Optional, List, Dict
 from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langchain_core.messages import (
     SystemMessage,
@@ -13,9 +15,9 @@ from langchain_core.messages import (
 
 # Create the agent graph
 def create_agent_graph(
-    model: str,
-    base_url: str,
-    model_api_key: str,
+    model_name: str = "phala/llama-3.3-70b-instruct",
+    base_url: str = "https://api.redpill.ai/v1",
+    model_api_key: Optional[str] = None,
     account_id: Optional[str] = None,
     private_key: Optional[str] = None,
     network: Optional[str] = None,
@@ -35,11 +37,14 @@ def create_agent_graph(
         use_single_prompt=use_single_prompt,
     )
 
-    model = ChatOpenAI(model=model, base_url=base_url, api_key=model_api_key)
+    model_api_key = model_api_key or os.getenv("REDPILL_API_KEY")
+    if not model_api_key:
+        raise ValueError("REDPILL_API_KEY is not set. Please set the REDPILL_API_KEY environment variable.")
+    model = ChatOpenAI(model=model_name, base_url=base_url, api_key=SecretStr(model_api_key))
 
     def agent_response(messages: Dict[str, List[BaseMessage]]):
         input_messages = messages.get("messages", [])
-        chat_messages = [SystemMessage(content=system_prompt)]
+        chat_messages: List[BaseMessage] = [SystemMessage(content=system_prompt)]
         # If single prompt is used, the mindshare prompts are included in the system prompt, and the list is empty
         for balance_prompt in mindshare_prompts:
             chat_messages.append(AIMessage(content=balance_prompt))
@@ -72,16 +77,16 @@ if __name__ == "__main__":
 
     # Swap out to redpill LLMs. The original agent uses Llama 3.1 70B on fireworks
     graph = create_agent_graph(
-        model="phala/llama-3.3-70b-instruct",
+        model_name="phala/llama-3.3-70b-instruct",
         base_url="https://api.redpill.ai/v1",
         model_api_key=os.getenv("REDPILL_API_KEY"),
         account_id=os.getenv("NEAR_ACCOUNT_ID"),
         private_key=os.getenv("NEAR_PRIVATE_KEY"),
-        network=os.getenv("NEAR_NETWORK", "testnet"),
+        network=os.getenv("NEAR_NETWORK", "mainnet"),
         kaito_api_key=os.getenv("KAITO_API_KEY", None),
         mock_balances=os.getenv("MOCK_BALANCES", "True").lower() == "true",
         mock_mindshare=os.getenv("MOCK_MINDSHARE", "True").lower() == "true",
-        use_single_prompt=os.getenv("USE_SINGLE_PROMPT", True),
+        use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
     )
 
     user_input = input("\nPrompt: ")

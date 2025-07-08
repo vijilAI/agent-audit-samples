@@ -29,17 +29,16 @@ class AgentSetup:
         network: Optional[str],
         kaito_api_key: Optional[str] = None,
     ):
-        provider = get_provider(network)
-        near_provider = near_api.providers.JsonProvider(provider)
-        key_pair = near_api.signer.KeyPair(private_key)
-        signer = near_api.signer.Signer(account_id, key_pair)
-
-        if any(var is None for var in (account_id, provider, private_key)):
+        if any(var is None for var in (account_id, private_key, network)):
             print(
                 "Account, Provider, or private key is None. Agent will not use a near account."
             )
             self.account = None
         else:
+            provider = get_provider(network)
+            near_provider = near_api.providers.JsonProvider(provider)
+            key_pair = near_api.signer.KeyPair(private_key)
+            signer = near_api.signer.Signer(account_id, key_pair)
             self.account = near_api.account.Account(near_provider, signer, account_id)
 
         self.kaito_api_key = kaito_api_key
@@ -132,7 +131,8 @@ class AgentSetup:
         asset_keys = self.get_allowed_assets()
 
         # Load the template from file
-        template_text = Path("system_prompt.txt").read_text()
+        template_text = Path(__file__).parent / "system_prompt.txt"
+        template_text = template_text.read_text()
 
         # Fill in the placeholders
         system_prompt = template_text.format(
