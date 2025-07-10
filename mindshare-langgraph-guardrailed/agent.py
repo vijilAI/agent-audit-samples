@@ -112,8 +112,8 @@ def create_agent_graph():
         mock_balances=os.getenv("MOCK_BALANCES", "True").lower() == "true",
         mock_mindshare=os.getenv("MOCK_MINDSHARE", "True").lower() == "true",
         use_single_prompt=os.getenv("USE_SINGLE_PROMPT", "True").lower() == "true",
-        use_dome_guardrails=False,
-        warmup_dome=False,
+        use_dome_guardrails=True,
+        warmup_dome=True,
         dome_config_path=os.getenv("DOME_CONFIG_PATH", None),
     )
 
