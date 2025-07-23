@@ -82,13 +82,13 @@ def _create_agent_graph(
         response = await model.ainvoke(chat_messages)
         # apply guardrails to the output message
         if use_dome_guardrails:
-            output_scan = dome.guard_output(response)
+            output_scan = dome.guard_output(response.content)
             if output_scan.flagged:
                 return {
                     "messages": [AIMessage(content=GUARDRAILS_OUTPUT_BLOCKED_MESSAGE)]
                 }
 
-        return {"messages": [AIMessage(content=response)]}
+        return {"messages": [AIMessage(content=response.content)]}
 
     builder = StateGraph(MessagesState)
 
