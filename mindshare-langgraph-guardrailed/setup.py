@@ -5,7 +5,7 @@ from constants import (
     ASSET_MAP,
     MOCK_BALANCES,
     MOCK_MINDSHARES,
-    NEAR_TOKEN_NAME,
+    NEAR_COIN_NAME,
     TIMEOUT_LIMIT,
 )
 from decimal import Decimal
@@ -13,11 +13,11 @@ from typing import Optional, Tuple, List
 from datetime import datetime, timedelta
 
 
-def get_asset_id(token: str):
-    if token == NEAR_TOKEN_NAME:
-        return "nep141:" + ASSET_MAP[token]["token_id"]
+def get_asset_id(token_name: str):
+    if token_name == NEAR_COIN_NAME:
+        return "nep141:" + ASSET_MAP[token_name]["token_id"]
     else:
-        return ASSET_MAP[token]["token_id"]
+        return ASSET_MAP[token_name]["token_id"]
 
 
 def get_provider(network):

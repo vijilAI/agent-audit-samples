@@ -65,7 +65,7 @@ ASSET_MAP = {
     },
 }
 
-NEAR_TOKEN_NAME = "near"
+NEAR_COIN_NAME = "NEAR"
 TIMEOUT_LIMIT = 120
 
 # Sample balances
