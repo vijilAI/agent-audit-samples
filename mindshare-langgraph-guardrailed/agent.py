@@ -1,5 +1,5 @@
 import os
-import nest_asyncio
+import asyncio
 from pydantic import SecretStr
 from setup import AgentSetup
 from typing import Optional, List, Dict
@@ -19,7 +19,6 @@ from constants import (
 )
 from vijil_dome import Dome
 
-nest_asyncio.apply()
 
 
 # Create the agent graph
@@ -61,8 +60,9 @@ def _create_agent_graph(
     if use_dome_guardrails:
         dome = Dome(dome_config_path)
         if warmup_dome:
-            _ = dome.guard_input("This is an input guardrail warmup query")
-            _ = dome.guard_output("This is an output guardrail wamrup query")
+            loop = asyncio.get_event_loop()
+            loop.create_task(dome.async_guard_input("This is an input guardrail warmup query"))
+            loop.create_task(dome.async_guard_output("This is an output guardrail wamrup query"))
 
     async def agent_response(messages: Dict[str, List[BaseMessage]]):
         input_messages = messages.get("messages", [])
