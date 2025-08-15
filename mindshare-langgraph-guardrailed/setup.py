@@ -1,14 +1,20 @@
 import near_api
 import requests
 from pathlib import Path
-from constants import ASSET_MAP, MOCK_BALANCES, MOCK_MINDSHARES
+from constants import (
+    ASSET_MAP,
+    MOCK_BALANCES,
+    MOCK_MINDSHARES,
+    NEAR_TOKEN_NAME,
+    TIMEOUT_LIMIT,
+)
 from decimal import Decimal
 from typing import Optional, Tuple, List
 from datetime import datetime, timedelta
 
 
 def get_asset_id(token: str):
-    if token == "NEAR":
+    if token == NEAR_TOKEN_NAME:
         return "nep141:" + ASSET_MAP[token]["token_id"]
     else:
         return ASSET_MAP[token]["token_id"]
@@ -93,7 +99,7 @@ class AgentSetup:
         yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
         base_url = f"https://api.kaito.ai/api/v1/mindshare?token={token}&start_date={yesterday}&end_date={today}"
         headers = {"x-api-key": self.kaito_api_key}
-        response = requests.get(base_url, headers=headers)
+        response = requests.get(base_url, headers=headers, timeout=TIMEOUT_LIMIT)
         print(f"Kaito API response for {token}: {response.text}")  # Debug log
         if response.status_code == 200:
             data = response.json()

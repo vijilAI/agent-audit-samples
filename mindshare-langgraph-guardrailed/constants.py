@@ -65,6 +65,8 @@ ASSET_MAP = {
     },
 }
 
+NEAR_TOKEN_NAME = "near"
+TIMEOUT_LIMIT = 120
 
 # Sample balances
 MOCK_BALANCES = {
