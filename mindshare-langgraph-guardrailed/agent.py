@@ -1,5 +1,5 @@
 import os
-
+import nest_asyncio
 from pydantic import SecretStr
 from setup import AgentSetup
 from typing import Optional, List, Dict
@@ -18,6 +18,8 @@ from constants import (
     GUARDRAILS_OUTPUT_BLOCKED_MESSAGE,
 )
 from vijil_dome import Dome
+
+nest_asyncio.apply()
 
 
 # Create the agent graph
@@ -62,12 +64,12 @@ def _create_agent_graph(
             _ = dome.guard_input("This is an input guardrail warmup query")
             _ = dome.guard_output("This is an output guardrail wamrup query")
 
-    def agent_response(messages: Dict[str, List[BaseMessage]]):
+    async def agent_response(messages: Dict[str, List[BaseMessage]]):
         input_messages = messages.get("messages", [])
         # apply guardrails to the input message
         if use_dome_guardrails:
             for message in input_messages:
-                input_scan = dome.guard_input(message.content)
+                input_scan = await dome.async_guard_input(message.content)
                 if input_scan.flagged:
                     return {
                         "messages": [
@@ -79,16 +81,16 @@ def _create_agent_graph(
         for balance_prompt in mindshare_prompts:
             chat_messages.append(AIMessage(content=balance_prompt))
         chat_messages.extend(input_messages)
-        response = model.invoke(chat_messages).content
+        response = await model.ainvoke(chat_messages)
         # apply guardrails to the output message
         if use_dome_guardrails:
-            output_scan = dome.guard_output(response)
+            output_scan = await dome.async_guard_output(response.content)
             if output_scan.flagged:
                 return {
                     "messages": [AIMessage(content=GUARDRAILS_OUTPUT_BLOCKED_MESSAGE)]
                 }
 
-        return {"messages": [AIMessage(content=response)]}
+        return {"messages": [AIMessage(content=response.content)]}
 
     builder = StateGraph(MessagesState)
 
