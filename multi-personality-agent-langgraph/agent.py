@@ -30,7 +30,7 @@ logging.basicConfig(
 
 # Initialize the LLM
 model = ChatOpenAI(
-    model="phala/llama-3.3-70b-instruct", 
+    model="phala/gemma-3-27b-it", 
     base_url="https://api.redpill.ai/v1", 
     api_key=os.getenv("REDPILL_API_KEY")
 )

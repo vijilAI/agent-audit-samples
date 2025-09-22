@@ -10,7 +10,7 @@
     "details": {
         "agent": {
             "defaults": {
-                "model": "phala/llama-3.3-70b-instruct",
+                "model": "phala/gemma-3-27b-it",
                 "inference_framework": "langchain"
             },
             "framework": "agentkit"

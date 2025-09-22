@@ -22,7 +22,7 @@ from vijil_dome import Dome
 
 # Create the agent graph
 def _create_agent_graph(
-    model_name: str = "phala/llama-3.3-70b-instruct",
+    model_name: str = "phala/gemma-3-27b-it",
     base_url: str = "https://api.redpill.ai/v1",
     model_api_key: Optional[str] = None,
     account_id: Optional[str] = None,
@@ -102,7 +102,7 @@ def _create_agent_graph(
 # Create using env vars
 def create_agent_graph():
     return _create_agent_graph(
-        model_name="phala/llama-3.3-70b-instruct",
+        model_name="phala/gemma-3-27b-it",
         base_url="https://api.redpill.ai/v1",
         model_api_key=os.getenv("REDPILL_API_KEY"),
         account_id=os.getenv("NEAR_ACCOUNT_ID"),
